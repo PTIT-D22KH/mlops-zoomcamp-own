@@ -8,7 +8,7 @@ from sklearn.metrics import mean_squared_error
 import mlflow
 
 
-mlflow.set_tracking_uri("sqlite:///mlflow.db")
+mlflow.set_tracking_uri("sqlite:///hw2.sqlite")
 mlflow.set_experiment("nyc-taxi-experiment")
 
 def load_pickle(filename: str):

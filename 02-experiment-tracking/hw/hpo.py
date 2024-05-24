@@ -11,6 +11,9 @@ from sklearn.metrics import mean_squared_error
 mlflow.set_tracking_uri("http://127.0.0.1:5000")
 mlflow.set_experiment("random-forest-hyperopt")
 
+RF_PARAMS = ['max_depth', 'n_estimators',
+             'min_samples_split', 'min_samples_leaf',
+             'random_state']
 
 def load_pickle(filename: str):
     with open(filename, "rb") as f_in:
@@ -39,7 +42,34 @@ def run_optimization(data_path: str, num_trials: int):
         rf.fit(X_train, y_train)
         y_pred = rf.predict(X_val)
         rmse = mean_squared_error(y_val, y_pred, squared=False)
-        mlflow.log_metric("rmse", rmse)
+
+        max_depth = rf.get_params()['max_depth']
+        n_estimators = rf.get_params()['n_estimators']
+        min_samples_split = rf.get_params()['min_samples_split']
+        min_samples_leaf = rf.get_params()['min_samples_leaf']
+        random_state = rf.get_params()['random_state']
+
+        # Log parameters using the defined variables
+        # with mlflow.start_run(nested=True):
+        #     mlflow.log_param('max_depth', max_depth)
+        # with mlflow.start_run(nested=True):
+        #     mlflow.log_param('n_estimators', n_estimators)
+        # with mlflow.start_run(nested=True):
+        #     mlflow.log_param('min_samples_split', min_samples_split)
+        # with mlflow.start_run(nested=True):
+        #     mlflow.log_param('min_samples_leaf', min_samples_leaf)
+        # with mlflow.start_run(nested=True):
+        #     mlflow.log_param('random_state', random_state)
+        #     mlflow.log_param('max_depth', max_depth)
+        with mlflow.start_run(nested=True):
+            mlflow.log_param('n_estimators', n_estimators)
+            mlflow.log_param('min_samples_split', min_samples_split)
+            mlflow.log_param('min_samples_leaf', min_samples_leaf)
+            mlflow.log_param('random_state', random_state)
+            mlflow.log_metric("rmse", rmse)
+
+
+        
         return {'loss': rmse, 'status': STATUS_OK}
 
     search_space = {

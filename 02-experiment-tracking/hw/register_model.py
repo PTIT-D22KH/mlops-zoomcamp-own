@@ -9,7 +9,7 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import root_mean_squared_error
 
 HPO_EXPERIMENT_NAME = "random-forest-hyperopt"
-EXPERIMENT_NAME = "random-forest-best--models"
+EXPERIMENT_NAME = "random-forest-best-models"
 RF_PARAMS = ['max_depth', 'n_estimators',
              'min_samples_split', 'min_samples_leaf',
              'random_state']
@@ -30,12 +30,8 @@ def train_and_log_model(data_path, params):
 
     with mlflow.start_run():
         for param in RF_PARAMS:
-            print("param: ", param)
             if param in params:
-                print("params[param]", params[param])
                 params[param] = int(params[param])
-            else:
-                print(f"params does not contain key: {param}")
 
         rf = RandomForestRegressor(**params)
         rf.fit(X_train, y_train)
@@ -81,7 +77,8 @@ def run_register_model(data_path: str, top_n: int):
                                   run_view_type=ViewType.ACTIVE_ONLY,
                                   max_results=1,
                                   order_by=["metrics.test_rmse ASC"])[0]
-    print(f"Model ID: {best_run.info.run_id} | Test RMSE: {round(best_run.data.metrics['test_rmse'],3)}")
+    print(f"Best model ID: {best_run.info.run_id}")
+    print("Best test RMSE: ", round(best_run.data.metrics['test_rmse'],3))
 
     # Register the best model
     mlflow.register_model(f"runs:/{best_run.info.run_id}/model", 'best_run_model')

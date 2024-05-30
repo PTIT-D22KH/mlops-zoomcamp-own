@@ -21,10 +21,6 @@ def transform(data, *args, **kwargs):
         Anything (e.g. data frame, dictionary, array, int, str, etc.)
     """
     # Specify your transformation logic here
-    data['duration'] = data.tpep_dropoff_datetime - data.tpep_pickup_datetime
-    data.duration = data.duration.dt.total_seconds() / 60
-
-    data = data[(data.duration >= 1) & (data.duration <= 60)]
 
     # categorical = ['PULocationID', 'DOLocationID']
     # data[categorical] = data[categorical].astype(str)
@@ -38,8 +34,8 @@ def transform(data, *args, **kwargs):
 
     lr = LinearRegression()
     lr.fit(X, y)
-    print(lr.coef_)
-    return data
+    print(lr.intercept_)
+    return dv, data
 
 
 @test

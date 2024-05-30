@@ -1,8 +1,7 @@
 import mlflow
 from mlflow import sklearn
 import pickle
-mlflow.set_tracking_uri("sqlite:///mlflow.db")
-mlflow.set_experiment("nyc-taxi-experiment")
+
 @data_exporter
 def export_data(data, *args, **kwargs):
     """
@@ -17,11 +16,12 @@ def export_data(data, *args, **kwargs):
         displayed when inspecting the block run.
     """
     # Assume that `data` is a tuple containing the DictVectorizer and the model
-    vectorizer, model = data
+    mlflow.set_tracking_uri("http://mlflow:5000")
+    # mlflow.list_experiments()
+    # print(mlflow.list_experiments())
+    
+    mlflow.set_experiment("log_model")
+    dv, lr = data[0], data[1]
 
-    with mlflow.start_run():
-        mlflow.set_tag("developer", "duongvct");
-        sklearn.log_model(model, "model")
-        with open("vectorizer.pkl", "wb") as f:
-            pickle.dump(vectorizer, f)
-        mlflow.log_artifact(local_path = '/workspaces/mlops-zoomcamp-own/03-orchestration/src/vectorizer.pkl', artifact_path = 'models_pickle')
+    with mlflow.start_run():    
+        mlflow.sklearn.log_model(lr, artifact_path="models")

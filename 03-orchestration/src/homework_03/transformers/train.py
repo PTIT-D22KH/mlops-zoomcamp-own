@@ -38,7 +38,7 @@ def transform(data, *args, **kwargs):
     lr = LinearRegression()
     lr.fit(X, y)
     print(lr.intercept_)
-    return dv, data
+    return dv, lr
 
 
 @test

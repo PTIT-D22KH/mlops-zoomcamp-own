@@ -55,3 +55,5 @@ notification_config:
 project_uuid: 2551f808911e4d9ba42b4a2e6c1e3828
 features:
   command_center: true
+  add_new_block_v2: true
+pipelines:

@@ -1,7 +1,8 @@
 import mlflow
 from mlflow import sklearn
 import pickle
-
+mlflow.set_tracking_uri("sqlite:///mlflow.db")
+mlflow.set_experiment("nyc-taxi-experiment")
 @data_exporter
 def export_data(data, *args, **kwargs):
     """
@@ -19,7 +20,8 @@ def export_data(data, *args, **kwargs):
     vectorizer, model = data
 
     with mlflow.start_run():
+        mlflow.set_tag("developer", "duongvct");
         sklearn.log_model(model, "model")
         with open("vectorizer.pkl", "wb") as f:
             pickle.dump(vectorizer, f)
-        mlflow.log_artifact("vectorizer.pkl")
+        mlflow.log_artifact(local_path = '/workspaces/mlops-zoomcamp-own/03-orchestration/src/vectorizer.pkl', artifact_path = 'models_pickle')

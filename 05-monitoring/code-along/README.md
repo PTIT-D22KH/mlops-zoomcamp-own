@@ -6,6 +6,6 @@ conda init
 
 conda activate py11
 
-docker-compose --build
+docker-compose up --build
 
 evidently ui

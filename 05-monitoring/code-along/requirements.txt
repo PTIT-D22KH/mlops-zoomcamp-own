@@ -11,3 +11,4 @@ numpy
 scikit-learn
 jupyter
 matplotlib
+numpy==1.26.4

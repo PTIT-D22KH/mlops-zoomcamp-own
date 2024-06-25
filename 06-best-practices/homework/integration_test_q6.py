@@ -15,7 +15,7 @@ def get_output_path(year, month):
     default_output_pattern = 's3://nyc-duration-prediction-alexey/taxi_type=fhv/year={year:04d}/month={month:02d}/predictions.parquet'
     output_pattern = os.getenv('OUTPUT_FILE_PATTERN', default_output_pattern)
     return output_pattern.format(year=year, month=month)
-def create_data():
+def test_create_data():
     S3_ENDPOINT_URL = os.getenv('S3_ENDPOINT_URL')
 
     options = {
@@ -33,7 +33,7 @@ def create_data():
     columns = ['PULocationID', 'DOLocationID', 'tpep_pickup_datetime', 'tpep_dropoff_datetime']
     df_input = pd.DataFrame(data, columns=columns)
     input_file = get_input_path(2023, 1)
-
+    output_file = get_output_path(2023, 1)
     df_input.to_parquet(
         input_file,
         engine='pyarrow',
@@ -41,6 +41,11 @@ def create_data():
         index=False,
         storage_options=options
     )
+    os.system('python batch_q4_q6.py 2023 1')
+    df_actual = pd.read_parquet(output_file, storage_options=options)
+    print(df_actual['predicted_duration'].sum())
+    assert abs(df_actual['predicted_duration'].sum() - 36.28) < 0.1, 'Wrong prediction'
+    
 
 if __name__ == "__main__":
-    create_data()
+    test_create_data()
